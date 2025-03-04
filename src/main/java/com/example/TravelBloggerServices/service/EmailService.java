@@ -17,7 +17,7 @@ public class EmailService {
         message.setTo(userEmail);
         message.setSubject("Sign Up Here");
         message.setText("Click here to sign up \n" +
-                "https://travelblog7.netlify.app");
+                "https://travelblog7.netlify.app/register");
 
         mailSender.send(message);
     }
