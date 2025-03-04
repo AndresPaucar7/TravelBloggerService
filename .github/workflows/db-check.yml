@@ -17,7 +17,7 @@ jobs:
 
       - name: Check Database Connection
         env:
-          DB_HOST: fakedpg-cv38rvbtq21c73bh5vpg-a.oregon-postgres.render.com
+          DB_HOST: dpg-cv38rvbtq21c73bh5vpg-a.oregon-postgres.render.com
           DB_PORT: 5432
           DB_NAME: traveler_registration
           DB_USER: traveler_registration_user
