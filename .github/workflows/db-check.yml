@@ -1,0 +1,48 @@
+name: Database Connection Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  check-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install PostgreSQL Client
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Check Database Connection and Table
+        env:
+          DB_URL: "dpg-cv38rvbtq21c73bh5vpg-a.oregon-postgres.render.com"
+          DB_PORT: "5432"
+          DB_NAME: "traveler_registration"
+          DB_USER: "traveler_registration_user"
+          DB_PASSWORD: "9xMSsl85lA4mPR7tuNvHKcGbsCKDYDGX"
+          REQUIRED_TABLE: "traveler_registration"
+        run: |
+          echo "Checking database connection"
+          PGPASSWORD=$DB_PASSWORD psql -h $DB_URL -p $DB_PORT -U $DB_USER -d $DB_NAME -c "SELECT 'Connected to the correct database' AS status;" || exit 1
+          
+          echo "Checking if correct table is being used"
+          TABLE_EXISTS=$(PGPASSWORD=$DB_PASSWORD psql -h $DB_URL -p $DB_PORT -U $DB_USER -d $DB_NAME -tAc "SELECT to_regclass('$REQUIRED_TABLE')")
+          
+          if [[ "$TABLE_EXISTS" == "$REQUIRED_TABLE" ]]; then
+            echo "We are using the correct table: '$REQUIRED_TABLE'."
+          else
+            echo "We are not using '$REQUIRED_TABLE'"
+            exit 1
+          fi
+
+      - name: Success
+        run: echo "Database is connected and traveler_registration table exists."
